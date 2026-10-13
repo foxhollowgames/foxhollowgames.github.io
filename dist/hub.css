@@ -6,3 +6,6 @@
 .volume-book-of-mormon{background-image:url("book-of-mormon/assets/relief.jpg")}
 .volume-doctrine-and-covenants{background-image:url("doctrine-and-covenants/assets/portraits/joseph-smith.jpg")}
 @media(max-width:900px){.volume-grid{grid-template-columns:1fr}.directory-page .volume-card{min-height:200px}}
+/* The portrait is tall. Keep the face in view when the card is wide and short. */
+.directory-page .volume-doctrine-and-covenants.has-artwork{background-position:center 24%}
+.directory-page .volume-bible.has-artwork{background-position:center 30%}
