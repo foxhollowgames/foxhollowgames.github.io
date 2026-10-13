@@ -2,11 +2,11 @@
 
 Wayfinder is the home page for the Wayfinder study guides. It links to each volume.
 
-| Volume | Path | Repository today |
+| Volume | Path | Repository |
 | --- | --- | --- |
-| Bible | `/bible/` | `foxhollowgames/bible-wayfinder` |
-| Book of Mormon | `/book-of-mormon/` | `foxhollowgames/book-of-mormon-wayfinder` |
-| Doctrine and Covenants | `/doctrine-and-covenants/` | `foxhollowgames/dc-wayfinder` |
+| Bible | `/bible/` | `foxhollowgames/bible` |
+| Book of Mormon | `/book-of-mormon/` | `foxhollowgames/book-of-mormon` |
+| Doctrine and Covenants | `/doctrine-and-covenants/` | `foxhollowgames/doctrine-and-covenants` |
 
 ## How the one domain works
 
@@ -24,3 +24,7 @@ Node.js is required. Nothing needs installing.
 - `dist/index.html` holds the volume cards.
 - `dist/hub.css` holds the hub styles. `dist/bible.css` is a copy of the shared reader stylesheet.
 - Each card uses an image from its volume. The paths are in `dist/hub.css`.
+
+## Old addresses
+
+Three small repositories hold the old addresses and send each link to its new place: `isaiah-redirect`, `dandc-redirect`, and `bookofmormon-redirect`.
