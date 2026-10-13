@@ -1,0 +1,8 @@
+/* Hub additions to bible.css. Each card borrows artwork from its volume. */
+.volume-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.directory-page .volume-card{min-height:340px}
+.volume-card p:last-child{margin:8px 0 0;color:#d6e7f1;text-shadow:0 1px 4px #000}
+.volume-bible{background-image:url("bible/assets/portraits/isaiah-v2.webp")}
+.volume-book-of-mormon{background-image:url("book-of-mormon/assets/relief.jpg")}
+.volume-doctrine-and-covenants{background-image:url("doctrine-and-covenants/assets/portraits/joseph-smith.jpg")}
+@media(max-width:900px){.volume-grid{grid-template-columns:1fr}.directory-page .volume-card{min-height:200px}}
