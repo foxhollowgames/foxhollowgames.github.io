@@ -23,7 +23,7 @@ Node.js is required. Nothing needs installing.
 
 - `dist/index.html` holds the volume cards.
 - `dist/hub.css` holds the hub styles. `dist/bible.css` is a copy of the shared reader stylesheet.
-- Each card uses an image from its volume. The paths are in `dist/hub.css`.
+- The image paths are in `dist/hub.css`. The Bible card uses `dist/assets/bloch-sermon-on-the-mount.jpg` (Carl Bloch, 1877, public domain, from Wikimedia Commons). The Book of Mormon card links to the cover image on churchofjesuschrist.org. The Doctrine and Covenants card uses a portrait from its volume.
 
 ## Old addresses
 

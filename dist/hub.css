@@ -1,11 +1,12 @@
 /* Hub additions to bible.css. Each card borrows artwork from its volume. */
 .volume-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .directory-page .volume-card{min-height:340px}
-.volume-card p:last-child{margin:8px 0 0;color:#d6e7f1;text-shadow:0 1px 4px #000}
-.volume-bible{background-image:url("bible/assets/portraits/isaiah-v2.webp")}
-.volume-book-of-mormon{background-image:url("book-of-mormon/assets/relief.jpg")}
-.volume-doctrine-and-covenants{background-image:url("doctrine-and-covenants/assets/portraits/joseph-smith.jpg")}
+/* The shared a.book-card:hover rule sets the background shorthand. These selectors outrank it, so the image stays on hover. */
+.directory-page .volume-bible.has-artwork{background-image:url("assets/bloch-sermon-on-the-mount.jpg")}
+.directory-page .volume-book-of-mormon.has-artwork{background-image:url("https://www.churchofjesuschrist.org/imgs/pezq51mqdlsfg6znj28seegave1osc6jg4d48ewb/full/%21640%2C/0/default")}
+.directory-page .volume-doctrine-and-covenants.has-artwork{background-image:url("doctrine-and-covenants/assets/portraits/joseph-smith.jpg")}
 @media(max-width:900px){.volume-grid{grid-template-columns:1fr}.directory-page .volume-card{min-height:200px}}
-/* The portrait is tall. Keep the face in view when the card is wide and short. */
+/* The images are tall. Keep the subject in view when the card is wide and short. */
 .directory-page .volume-doctrine-and-covenants.has-artwork{background-position:center 29%}
-.directory-page .volume-bible.has-artwork{background-position:center 22%}
+.directory-page .volume-bible.has-artwork{background-position:center 30%}
+.directory-page .volume-book-of-mormon.has-artwork{background-position:center 33%}
