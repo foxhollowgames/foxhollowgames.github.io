@@ -25,6 +25,19 @@ Node.js is required. Nothing needs installing.
 - `dist/hub.css` holds the hub styles. `dist/bible.css` is a copy of the shared reader stylesheet.
 - The image paths are in `dist/hub.css`. The Bible card uses `dist/assets/bloch-sermon-on-the-mount.jpg` (Carl Bloch, 1877, public domain, from Wikimedia Commons). The Book of Mormon card links to the cover image on churchofjesuschrist.org. The Doctrine and Covenants card uses a portrait from its volume.
 
+## Shared viewer
+
+The Bible and the Doctrine and Covenants use one reader. Its source is in `viewer/`. The Book of Mormon uses the shared shell files (`breadcrumbs`, `chapter-picker`, `modal-drag`, `settings-menu`) with its own `app.js` and `styles.css`.
+
+1. Edit the files in `viewer/`.
+2. Change `releaseVersion` in `viewer/app.js` to a new value. Each page loads the shared files with this version.
+3. Run `npm run sync-viewer`. The script copies the files into each volume's `dist/` folder and updates the `?v=` values in its pages.
+4. Run the checks in each volume, then commit and push each volume.
+
+Run `npm run sync-viewer -- --check` to find copies that are out of date. The script stops if someone edited a copy in a volume. Move that edit into `viewer/` first.
+
+A book changes the reader through its data, not through code. For example, `timeline.milestones: false` turns off dated milestones, and `map.fadeMinorRivers: true` draws small rivers thin.
+
 ## Old addresses
 
 Three small repositories hold the old addresses and send each link to its new place: `isaiah-redirect`, `dandc-redirect`, and `bookofmormon-redirect`.
