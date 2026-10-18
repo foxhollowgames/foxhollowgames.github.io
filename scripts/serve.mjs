@@ -4,12 +4,13 @@ import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // The hub serves its own page at the root and each volume's dist folder under its path.
-// Set BIBLE_DIST, BOM_DIST, or DC_DIST to use a folder that is not a sibling of this one.
+// Set BIBLE_DIST, BOM_DIST, DC_DIST, or TIMELINE_DIST to use a folder that is not a sibling of this one.
 const sibling = name => fileURLToPath(new URL(`../../${name}/dist/`, import.meta.url));
 const mounts = {
   '/bible/': process.env.BIBLE_DIST || sibling('Bible Wayfinder'),
   '/book-of-mormon/': process.env.BOM_DIST || sibling('Book of Mormon Wayfinder'),
   '/doctrine-and-covenants/': process.env.DC_DIST || sibling('D&C Wayfinder'),
+  '/timeline/': process.env.TIMELINE_DIST || sibling('timeline'),
   '/': fileURLToPath(new URL('../dist/', import.meta.url)),
 };
 const port = Number(process.env.PORT || 4170);
