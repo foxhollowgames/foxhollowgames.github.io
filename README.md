@@ -7,6 +7,7 @@ Wayfinder is the home page for the Wayfinder study guides. It links to each volu
 | Bible | `/bible/` | `foxhollowgames/bible` |
 | Book of Mormon | `/book-of-mormon/` | `foxhollowgames/book-of-mormon` |
 | Doctrine and Covenants | `/doctrine-and-covenants/` | `foxhollowgames/doctrine-and-covenants` |
+| Timeline | `/timeline/` | `foxhollowgames/timeline` |
 
 ## How the one domain works
 
@@ -17,13 +18,13 @@ This repository is the GitHub Pages user site (`foxhollowgames.github.io`). Its 
 Node.js is required. Nothing needs installing.
 
 - Run `npm start` in this folder and open <http://127.0.0.1:4170>.
-- The server reads each volume from a sibling folder: `Bible Wayfinder`, `Book of Mormon Wayfinder`, and `D&C Wayfinder`. Set `BIBLE_DIST`, `BOM_DIST`, or `DC_DIST` to use a different `dist` folder.
+- The server reads each volume from a sibling folder: `Bible Wayfinder`, `Book of Mormon Wayfinder`, and `D&C Wayfinder`. The timeline comes from `timeline/dist`. Set `BIBLE_DIST`, `BOM_DIST`, `DC_DIST`, or `TIMELINE_DIST` to use a different `dist` folder.
 
 ## Edit
 
 - `dist/index.html` holds the volume cards.
 - `dist/hub.css` holds the hub styles. `dist/bible.css` is a copy of the shared reader stylesheet.
-- The image paths are in `dist/hub.css`. The Bible card uses `dist/assets/bloch-sermon-on-the-mount.jpg` (Carl Bloch, 1877, public domain, from Wikimedia Commons). The Book of Mormon card links to the cover image on churchofjesuschrist.org. The Doctrine and Covenants card uses a portrait from its volume.
+- The image paths are in `dist/hub.css`. The Bible card uses `dist/assets/bloch-sermon-on-the-mount.jpg` (Carl Bloch, 1877, public domain, from Wikimedia Commons). The Book of Mormon card links to the cover image on churchofjesuschrist.org. The Doctrine and Covenants card uses a portrait from its volume. The Timeline card uses `timeline/assets/hub-card.jpg`, cropped from NASA's Blue Marble.
 
 ## Shared viewer
 
@@ -35,6 +36,8 @@ The Bible and the Doctrine and Covenants use one reader. Its source is in `viewe
 4. Run the checks in each volume, then commit and push each volume.
 
 Run `npm run sync-viewer -- --check` to find copies that are out of date. The script stops if someone edited a copy in a volume. Move that edit into `viewer/` first.
+
+Each chapter on the timeline's list gets a "See on timeline" link. The reader fetches `../timeline/data/chapters.json` to find them.
 
 A book changes the reader through its data, not through code. For example, `timeline.milestones: false` turns off dated milestones, and `map.fadeMinorRivers: true` draws small rivers thin.
 
