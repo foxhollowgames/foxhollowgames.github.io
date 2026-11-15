@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.mjs",
-    "sync-viewer": "node scripts/sync-viewer.mjs"
+    "sync-viewer": "node scripts/sync-viewer.mjs",
+    "sync-analytics": "node scripts/sync-analytics.mjs",
+    "check:analytics": "node scripts/check-analytics.mjs"
   }
 }

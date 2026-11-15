@@ -44,3 +44,34 @@ A book changes the reader through its data, not through code. For example, `time
 ## Old addresses
 
 Three small repositories hold the old addresses and send each link to its new place: `isaiah-redirect`, `dandc-redirect`, and `bookofmormon-redirect`.
+
+## Optional visit analytics
+
+`viewer/analytics.js` is the source for optional Google Analytics (GA4), measurement ID `G-DB54M9BCZM`.
+Google's script loads only after the visitor selects **Accept analytics**. **Analytics choices** reopens the controls.
+Declining or withdrawing prevents future collection and removes this implementation's first-party GA cookies.
+Withdrawal reloads an already-tracked page to unload the Google library. It does not delete historical data at Google.
+The choice lasts 180 days in local storage; GA cookies expire after 60 days without renewal.
+
+Only page loads are instrumented, grouped into the hub, Bible, Book of Mormon, Doctrine and Covenants, and Timeline.
+No chapter state, search terms, URL query/fragment, document title, or referrer address is intentionally sent.
+GA still creates standard session, first-visit, and engagement metadata. Counts exclude non-consenting visitors and blocked scripts.
+Keep Enhanced Measurement, Google signals, user-provided data, advertising personalization, and granular device/location collection OFF in GA.
+Keep event/user retention at two months with reset on new activity OFF. This code does not configure the GA admin settings.
+
+After editing the source, run `npm run sync-analytics`, then `npm run check:analytics`.
+Set `BIBLE_DIST`, `BOM_DIST`, `DC_DIST`, and `TIMELINE_DIST` for alternate checkout locations.
+Run the existing checks in each volume before publishing. Keep the analytics loader in HTML generators and templates.
+The sync script deliberately skips redirect pages. Publish all changed repositories through their existing Pages workflows.
+
+For a labeled production check, open `https://wayfinder.josephnewelldesign.com/?analytics_debug=1`, then accept analytics.
+This sets `debug_mode: true` and `traffic_type: verification`; inspect GA DebugView for `page_view`.
+The flag is not sent as part of the URL, and does not bypass consent. Remove it after testing.
+Normal automated browsers and all non-production hosts (including localhost) never load GA.
+Verification allows an automated browser only with the explicit debug flag on a production host.
+Debug traffic is labeled, not automatically excluded from aggregate reports. Use a GA developer/internal traffic filter if needed.
+
+Official implementation references:
+- https://developers.google.com/analytics/devguides/collection/ga4/views
+- https://developers.google.com/analytics/devguides/collection/ga4/reference/config
+- https://developers.google.com/tag-platform/security/guides/privacy
