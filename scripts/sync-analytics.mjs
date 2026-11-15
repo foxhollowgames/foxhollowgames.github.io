@@ -25,10 +25,12 @@ async function pages(dir, dist) {
     const path = join(dir, item.name);
     if (item.isDirectory()) { if (!['assets', 'vendor', 'data', 'tiles'].includes(item.name)) await pages(path, dist); continue; }
     if (!item.name.endsWith('.html')) continue;
+    // Write only persistent templates. Existing generators produce the named book pages.
+    if (!check && !['index.html', 'book.html'].includes(item.name)) continue;
     const current = await readFile(path, 'utf8');
     if (!/<\/head>/i.test(current) || /http-equiv=["']refresh/i.test(current)) continue;
     const src = relative(dir, join(dist, 'analytics.js')).replaceAll('\\', '/');
-    const tag = `<script defer src="${src}?v=20261115.1"></script>`;
+    const tag = `<script defer src="${src}?v=20261115.3"></script>`;
     const next = /<script\b[^>]*src=["'][^"']*analytics\.js[^"']*["'][^>]*><\/script>/.test(current)
       ? current.replace(/<script\b[^>]*src=["'][^"']*analytics\.js[^"']*["'][^>]*><\/script>/g, tag)
       : current.replace(/<\/head>/i, tag + '</head>');

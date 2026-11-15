@@ -7,7 +7,8 @@
   const lifetime = 180 * 24 * 60 * 60 * 1000;
   const production = ['wayfinder.josephnewelldesign.com', 'foxhollowgames.github.io'].includes(location.hostname);
   const verification = new URLSearchParams(location.search).get('analytics_debug') === '1';
-  const eligible = false; // Collection paused pending end-to-end privacy verification.
+  const collectionMode = 'verification'; // 'enabled', 'verification', or 'paused'.
+  const eligible = production && collectionMode !== 'paused' && (collectionMode === 'enabled' || verification) && (!navigator.webdriver || verification);
   let loaded = false;
   let choice = readChoice();
   window['ga-disable-' + id] = choice !== 'accepted' || !eligible;
@@ -56,6 +57,8 @@
       cookie_flags: 'SameSite=Lax;Secure'
     };
     if (verification) Object.assign(config, { debug_mode: true, traffic_type: 'verification' });
+    // Apply privacy settings globally BEFORE any Google bootstrap can initialize a destination.
+    gtag('set', config);
     gtag('js', new Date());
     gtag('config', id, config);
     gtag('event', 'page_view', { send_to: id, page_location: config.page_location, page_referrer: '', page_title: config.page_title, ...(verification ? { debug_mode: true, traffic_type: 'verification' } : {}) });

@@ -59,7 +59,7 @@ GA still creates standard session, first-visit, and engagement metadata. Counts 
 Keep Enhanced Measurement, Google signals, user-provided data, advertising personalization, and granular device/location collection OFF in GA.
 Keep event/user retention at two months with reset on new activity OFF. This code does not configure the GA admin settings.
 
-After editing the source, run `npm run sync-analytics`, then `npm run check:analytics`.
+After editing the source, run `npm run sync-analytics`, then the Bible `python scripts/build-share.py` and D&C `python3 scripts/build.py` generators. Run `npm run check:analytics` and `npm run sync-analytics -- --check` in the hub.
 Set `BIBLE_DIST`, `BOM_DIST`, `DC_DIST`, and `TIMELINE_DIST` for alternate checkout locations.
 Run the existing checks in each volume before publishing. Keep the analytics loader in HTML generators and templates.
 The sync script deliberately skips redirect pages. Publish all changed repositories through their existing Pages workflows.
@@ -75,3 +75,8 @@ Official implementation references:
 - https://developers.google.com/analytics/devguides/collection/ga4/views
 - https://developers.google.com/analytics/devguides/collection/ga4/reference/config
 - https://developers.google.com/tag-platform/security/guides/privacy
+
+The source's collectionMode can pause all collection or allow only explicit verification URLs during deployment checks.
+Global privacy parameters are queued with gtag('set') before initialization; explicit page_view parameters duplicate the sanitized fields.
+The upgraded Google tag container must also disable its automatic detection and user-data capabilities and set send_page_view=false.
+Do not assume on-page gtag('config') overrides the upgraded container. Verify actual received values before enabling collection.

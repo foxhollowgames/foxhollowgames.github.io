@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 const source = await readFile(new URL('../viewer/analytics.js', import.meta.url), 'utf8');
-function setup({ hostname = 'wayfinder.josephnewelldesign.com', search = '?q=private', pathname = '/bible/john.html', saved = null, webdriver = false, blockedStorage = false } = {}) {
+function setup({ hostname = 'wayfinder.josephnewelldesign.com', search = '?q=private', pathname = '/bible/john.html', saved = null, webdriver = false, blockedStorage = false, mode = 'enabled' } = {}) {
   const elements = [], listeners = {}, scripts = [];
   function element(tag) {
     const e = { tag, hidden: false, children: [], handlers: {}, append(...children) { this.children.push(...children); if (tag === 'head') scripts.push(...children.filter(c => c.tag === 'script')); }, setAttribute() {}, addEventListener(type, fn) { this.handlers[type] = fn; }, focus() {}, textContent: '' };
@@ -12,16 +12,19 @@ function setup({ hostname = 'wayfinder.josephnewelldesign.com', search = '?q=pri
   const storage = new Map(saved ? [['wayfinder.analytics-consent.v1', JSON.stringify(saved)]] : []);
   const context = { window: {}, document: { head: element('head'), body: element('body'), cookie: '', createElement: element }, location, navigator: { webdriver }, URLSearchParams, localStorage: { getItem(k) { if (blockedStorage) throw Error(); return storage.get(k); }, setItem(k,v) { if (blockedStorage) throw Error(); storage.set(k,v); } } };
   context.window.addEventListener = (type, fn) => { listeners[type] = fn; };
-  vm.runInNewContext(source, context);
+  vm.runInNewContext(source.replace(/const collectionMode = '[^']+';/, `const collectionMode = '${mode}';`), context);
   return { ...context, scripts, storage, elements, listeners, click(text) { elements.find(e => e.textContent === text).handlers.click(); }, commands() { return (context.window.dataLayer || []).map(a => Array.from(a)); } };
 }
 const future = Date.now() + 100000;
+for (const mode of ['paused', 'verification']) { const gated = setup({ mode, saved: { value: 'accepted', expires: future } }); assert.equal(gated.scripts.length, 0); }
 let t = setup(); assert.equal(t.scripts.length, 0); assert.equal(t.commands().length, 0);
 t.click('Decline analytics'); assert.equal(t.scripts.length, 0);
 t = setup(); t.click('Accept analytics'); assert.equal(t.scripts.length, 1);
 assert.equal(t.scripts[0].referrerPolicy, 'no-referrer');
 let config = t.commands().find(c => c[0] === 'config')[2];
 assert.equal(config.page_location, 'https://wayfinder.josephnewelldesign.com/bible/');
+assert.ok(t.commands().findIndex(c => c[0] === 'set' && typeof c[1] === 'object') < t.commands().findIndex(c => c[0] === 'js'));
+assert.equal(t.commands().find(c => c[0] === 'event')[2].page_location, config.page_location);
 assert.equal(config.page_title, 'Wayfinder | Bible'); assert.equal(config.page_referrer, '');
 assert.equal(config.allow_google_signals, false); assert.equal(config.allow_ad_personalization_signals, false); assert.equal(config.send_page_view, false);
 assert.equal(t.commands().filter(c => c[0] === 'event' && c[1] === 'page_view').length, 1);
