@@ -80,3 +80,5 @@ The source's collectionMode can pause all collection or allow only explicit veri
 Global privacy parameters are queued with gtag('set') before initialization; explicit page_view parameters duplicate the sanitized fields.
 The upgraded Google tag container must also disable its automatic detection and user-data capabilities and set send_page_view=false.
 Do not assume on-page gtag('config') overrides the upgraded container. Verify actual received values before enabling collection.
+
+Run npm run check:analytics-tag before re-enabling collection or after Google tag settings change. It reads the published Google container without executing it or sending a visit. If Google's resource format changes, review the configuration manually.

@@ -17,7 +17,9 @@ function setup({ hostname = 'wayfinder.josephnewelldesign.com', search = '?q=pri
 }
 const future = Date.now() + 100000;
 for (const mode of ['paused', 'verification']) { const gated = setup({ mode, saved: { value: 'accepted', expires: future } }); assert.equal(gated.scripts.length, 0); }
-let t = setup(); assert.equal(t.scripts.length, 0); assert.equal(t.commands().length, 0);
+let t = setup({ mode: 'paused', search: '?analytics_debug=1', saved: { value: 'accepted', expires: future } }); assert.equal(t.scripts.length, 0);
+t = setup({ mode: 'verification', search: '?analytics_debug=1', saved: { value: 'accepted', expires: future } }); assert.equal(t.scripts.length, 1);
+t = setup(); assert.equal(t.scripts.length, 0); assert.equal(t.commands().length, 0);
 t.click('Decline analytics'); assert.equal(t.scripts.length, 0);
 t = setup(); t.click('Accept analytics'); assert.equal(t.scripts.length, 1);
 assert.equal(t.scripts[0].referrerPolicy, 'no-referrer');

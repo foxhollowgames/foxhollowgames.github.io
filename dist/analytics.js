@@ -7,7 +7,7 @@
   const lifetime = 180 * 24 * 60 * 60 * 1000;
   const production = ['wayfinder.josephnewelldesign.com', 'foxhollowgames.github.io'].includes(location.hostname);
   const verification = new URLSearchParams(location.search).get('analytics_debug') === '1';
-  const collectionMode = 'verification'; // 'enabled', 'verification', or 'paused'.
+  const collectionMode = 'enabled'; // 'enabled', 'verification', or 'paused'.
   const eligible = production && collectionMode !== 'paused' && (collectionMode === 'enabled' || verification) && (!navigator.webdriver || verification);
   let loaded = false;
   let choice = readChoice();
