@@ -7,7 +7,7 @@
   const lifetime = 180 * 24 * 60 * 60 * 1000;
   const production = ['wayfinder.josephnewelldesign.com', 'foxhollowgames.github.io'].includes(location.hostname);
   const verification = new URLSearchParams(location.search).get('analytics_debug') === '1';
-  const eligible = production && (!navigator.webdriver || verification);
+  const eligible = false; // Collection paused pending end-to-end privacy verification.
   let loaded = false;
   let choice = readChoice();
   window['ga-disable-' + id] = choice !== 'accepted' || !eligible;
@@ -58,7 +58,7 @@
     if (verification) Object.assign(config, { debug_mode: true, traffic_type: 'verification' });
     gtag('js', new Date());
     gtag('config', id, config);
-    gtag('event', 'page_view', { send_to: id });
+    gtag('event', 'page_view', { send_to: id, page_location: config.page_location, page_referrer: '', page_title: config.page_title, ...(verification ? { debug_mode: true, traffic_type: 'verification' } : {}) });
     const script = document.createElement('script');
     script.async = true;
     script.referrerPolicy = 'no-referrer';
