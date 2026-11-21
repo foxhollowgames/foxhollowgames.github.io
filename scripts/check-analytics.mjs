@@ -5,7 +5,7 @@ const source = await readFile(new URL('../viewer/analytics.js', import.meta.url)
 function setup({ hostname = 'wayfinder.josephnewelldesign.com', search = '?q=private', pathname = '/bible/john.html', saved = null, webdriver = false, blockedStorage = false, mode = 'enabled', menu = false } = {}) {
   const elements = [], listeners = {}, scripts = [], focused = {};
   function element(tag) {
-    const e = { tag, hidden: false, children: [], handlers: {}, append(...children) { this.children.push(...children); if (tag === 'head') scripts.push(...children.filter(c => c.tag === 'script')); }, setAttribute() {}, addEventListener(type, fn) { this.handlers[type] = fn; }, focus() { focused.e = this; }, textContent: '' };
+    const e = { tag, hidden: false, children: [], handlers: {}, prepend(...children) { this.children.unshift(...children); }, append(...children) { this.children.push(...children); if (tag === 'head') scripts.push(...children.filter(c => c.tag === 'script')); }, setAttribute() {}, addEventListener(type, fn) { this.handlers[type] = fn; }, focus() { focused.e = this; }, textContent: '' };
     elements.push(e); return e;
   }
   const location = { hostname, origin: 'https://' + hostname, pathname, search, reload() { location.reloaded = true; } };
@@ -48,6 +48,7 @@ const panelOf = t => t.elements.find(e => e.id === 'wf-analytics-panel');
 t = setup({ menu: true }); assert.equal(floating(t).hidden, false); assert.equal(panelOf(t).hidden, false); assert.equal(t.menuPanel.children[0].textContent, 'Analytics choices');
 t.click('Decline analytics'); assert.equal(floating(t).hidden, true); assert.equal(panelOf(t).hidden, true); assert.equal(t.focused.e, t.menuButton);
 t.menuPanel.children[0].handlers.click(); assert.equal(panelOf(t).hidden, false);
+t.elements.find(e => e.id === 'wf-analytics-close').handlers.click(); assert.equal(panelOf(t).hidden, true); assert.equal(floating(t).hidden, true); assert.equal(t.focused.e, t.menuButton); assert.equal(JSON.parse(t.storage.get('wayfinder.analytics-consent.v1')).value, 'declined');
 t = setup({ menu: true, saved: { value: 'accepted', expires: future } }); assert.equal(floating(t).hidden, true); assert.equal(panelOf(t).hidden, true);
 t.storage.clear(); t.listeners.storage({ key: null }); assert.equal(floating(t).hidden, false); assert.equal(panelOf(t).hidden, false);
 t = setup({ saved: { value: 'declined', expires: future } }); assert.equal(floating(t).hidden, false); assert.equal(panelOf(t).hidden, true);
