@@ -2,18 +2,20 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 const source = await readFile(new URL('../viewer/analytics.js', import.meta.url), 'utf8');
-function setup({ hostname = 'wayfinder.josephnewelldesign.com', search = '?q=private', pathname = '/bible/john.html', saved = null, webdriver = false, blockedStorage = false, mode = 'enabled' } = {}) {
-  const elements = [], listeners = {}, scripts = [];
+function setup({ hostname = 'wayfinder.josephnewelldesign.com', search = '?q=private', pathname = '/bible/john.html', saved = null, webdriver = false, blockedStorage = false, mode = 'enabled', menu = false } = {}) {
+  const elements = [], listeners = {}, scripts = [], focused = {};
   function element(tag) {
-    const e = { tag, hidden: false, children: [], handlers: {}, append(...children) { this.children.push(...children); if (tag === 'head') scripts.push(...children.filter(c => c.tag === 'script')); }, setAttribute() {}, addEventListener(type, fn) { this.handlers[type] = fn; }, focus() {}, textContent: '' };
+    const e = { tag, hidden: false, children: [], handlers: {}, append(...children) { this.children.push(...children); if (tag === 'head') scripts.push(...children.filter(c => c.tag === 'script')); }, setAttribute() {}, addEventListener(type, fn) { this.handlers[type] = fn; }, focus() { focused.e = this; }, textContent: '' };
     elements.push(e); return e;
   }
   const location = { hostname, origin: 'https://' + hostname, pathname, search, reload() { location.reloaded = true; } };
   const storage = new Map(saved ? [['wayfinder.analytics-consent.v1', JSON.stringify(saved)]] : []);
-  const context = { window: {}, document: { head: element('head'), body: element('body'), cookie: '', createElement: element }, location, navigator: { webdriver }, URLSearchParams, localStorage: { getItem(k) { if (blockedStorage) throw Error(); return storage.get(k); }, setItem(k,v) { if (blockedStorage) throw Error(); storage.set(k,v); } } };
+  const menuButton = menu ? element('button') : null, menuPanel = menu ? element('section') : null;
+  if (menuPanel) menuPanel.closest = s => s === '.settings-menu' ? { querySelector: q => q === '.settings-button' ? menuButton : null } : null;
+  const context = { window: {}, document: { head: element('head'), body: element('body'), cookie: '', createElement: element, querySelector: s => s === '.settings-panel' ? menuPanel : null, getElementById: () => null }, location, navigator: { webdriver }, URLSearchParams, localStorage: { getItem(k) { if (blockedStorage) throw Error(); return storage.get(k); }, setItem(k,v) { if (blockedStorage) throw Error(); storage.set(k,v); } } };
   context.window.addEventListener = (type, fn) => { listeners[type] = fn; };
   vm.runInNewContext(source.replace(/const collectionMode = '[^']+';/, `const collectionMode = '${mode}';`), context);
-  return { ...context, scripts, storage, elements, listeners, click(text) { elements.find(e => e.textContent === text).handlers.click(); }, commands() { return (context.window.dataLayer || []).map(a => Array.from(a)); } };
+  return { ...context, menuPanel, menuButton, focused, scripts, storage, elements, listeners, click(text) { elements.find(e => e.textContent === text).handlers.click(); }, commands() { return (context.window.dataLayer || []).map(a => Array.from(a)); } };
 }
 const future = Date.now() + 100000;
 for (const mode of ['paused', 'verification']) { const gated = setup({ mode, saved: { value: 'accepted', expires: future } }); assert.equal(gated.scripts.length, 0); }
@@ -41,4 +43,12 @@ t = setup({ webdriver: true, search: '?analytics_debug=1&q=secret' }); t.click('
 t = setup({ blockedStorage: true }); assert.equal(t.scripts.length, 0); t.click('Accept analytics'); assert.equal(t.scripts.length, 1);
 t = setup({ saved: { value: 'accepted', expires: future } }); t.storage.clear(); t.listeners.storage({key: null}); assert.equal(t.window['ga-disable-G-DB54M9BCZM'], true); assert.equal(t.location.reloaded, true);
 for (const section of ['book-of-mormon', 'doctrine-and-covenants', 'timeline', '']) { t = setup({ pathname: '/' + section + '/private', saved: { value: 'accepted', expires: future } }); config = t.commands().find(c => c[0] === 'config')[2]; assert.equal(config.page_location, t.location.origin + (section ? '/' + section + '/' : '/')); }
-console.log('Analytics checks passed: opt-in/decline, withdrawal, expiry, blocked storage, cross-tab revocation, local/bot exclusion, debug labeling, sanitization, and single pageview.');
+const floating = t => t.elements.find(e => e.id === 'wf-analytics-settings');
+const panelOf = t => t.elements.find(e => e.id === 'wf-analytics-panel');
+t = setup({ menu: true }); assert.equal(floating(t).hidden, false); assert.equal(panelOf(t).hidden, false); assert.equal(t.menuPanel.children[0].textContent, 'Analytics choices');
+t.click('Decline analytics'); assert.equal(floating(t).hidden, true); assert.equal(panelOf(t).hidden, true); assert.equal(t.focused.e, t.menuButton);
+t.menuPanel.children[0].handlers.click(); assert.equal(panelOf(t).hidden, false);
+t = setup({ menu: true, saved: { value: 'accepted', expires: future } }); assert.equal(floating(t).hidden, true); assert.equal(panelOf(t).hidden, true);
+t.storage.clear(); t.listeners.storage({ key: null }); assert.equal(floating(t).hidden, false); assert.equal(panelOf(t).hidden, false);
+t = setup({ saved: { value: 'declined', expires: future } }); assert.equal(floating(t).hidden, false); assert.equal(panelOf(t).hidden, true);
+console.log('Analytics checks passed: menu placement after a choice, opt-in/decline, withdrawal, expiry, blocked storage, cross-tab revocation, local/bot exclusion, debug labeling, sanitization, and single pageview.');
